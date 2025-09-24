@@ -1,0 +1,869 @@
+/*=============================================================================
+/ SQL_Write: Treatment of data send in MS-SQL SERVER Process Database. 
+/  
+/ (c) CMI Industry
+//=============================================================================*/
+#include "stdafx.h"
+#include "SQL.h"
+
+extern Sql *m_sql1;
+// ******************************************************************************************************
+// SQL_DIMENSIONS_UPDATE: Update DIMENSIONS Table
+// 
+// Revisions:
+//  Created:      2006-Jun   R.Rabemananjara
+//  Modified:     2016-May   JC.Mitais   LTOP 3.0
+// ******************************************************************************************************
+bool SQL_DIMENSIONS_UPDATE ()
+{
+   string Table1 = "DIMENSIONS";
+   string Procedure = "[" + (string)BD_PROCESS + "].[dbo].[" + Table1 + "_UPDATE]";
+
+   struct str_PrmArrays PrmArr;
+   VariantInit(&PrmArr.var); 
+
+   m_sql1->IntProcArray(&PrmArr, "MAX_NB_COIL", MAX_NB_COIL);  
+   m_sql1->IntProcArray(&PrmArr, "MAX_NB_CLA", MAX_NB_CLA);
+   m_sql1->IntProcArray(&PrmArr, "MAX_NB_PDT", MAX_NB_PDT);
+   m_sql1->IntProcArray(&PrmArr, "MAX_NB_MESH", MAX_NB_MESH);
+
+   m_sql1->IntProcArray(&PrmArr, "NB_FUR_RTF", NB_FUR_RTF);
+
+   m_sql1->IntProcArray(&PrmArr, "NB_ZON_RTH", NB_ZON_RTH);
+   m_sql1->IntProcArray(&PrmArr, "NB_ECZ_RTH", NB_ECZ_RTH);
+   m_sql1->IntProcArray(&PrmArr, "NB_ELT_RTH", NB_ELT_RTH);
+   m_sql1->IntProcArray(&PrmArr, "NB_ROL_RTH", NB_ROL_RTH);
+
+   m_sql1->IntProcArray(&PrmArr, "NB_ZON_RTS", NB_ZON_RTS);
+   m_sql1->IntProcArray(&PrmArr, "NB_ECZ_RTS", NB_ECZ_RTS);
+   m_sql1->IntProcArray(&PrmArr, "NB_ELT_RTS", NB_ELT_RTS);
+   m_sql1->IntProcArray(&PrmArr, "NB_ROL_RTS", NB_ROL_RTS);
+
+   m_sql1->IntProcArray(&PrmArr, "NB_FUR_TNL", NB_FUR_TNL);
+   m_sql1->IntProcArray(&PrmArr, "NB_ZON_TNL", NB_ZON_TNL);
+
+   m_sql1->IntProcArray(&PrmArr, "NB_FUR_SLW", NB_FUR_SLW);
+   m_sql1->IntProcArray(&PrmArr, "NB_ZON_SLW", NB_ZON_SLW);
+
+   m_sql1->IntProcArray(&PrmArr, "NB_FUR_JET", NB_FUR_JET);
+   m_sql1->IntProcArray(&PrmArr, "NB_ZON_JET", NB_ZON_JET);
+
+   m_sql1->IntProcArray(&PrmArr, "NB_FUR_OVG", NB_FUR_OVG);
+   m_sql1->IntProcArray(&PrmArr, "NB_ZON_OVG", NB_ZON_OVG);
+
+   m_sql1->IntProcArray(&PrmArr, "NB_FUR_FCS", NB_FUR_FCS);
+   m_sql1->IntProcArray(&PrmArr, "NB_ZON_FCS", NB_ZON_FCS);
+	
+   m_sql1->IntProcArray(&PrmArr, "NB_FUR_EXT", NB_FUR_EXT);
+   m_sql1->IntProcArray(&PrmArr, "NB_ZON_EXT", NB_ZON_EXT);
+
+   m_sql1->IntProcArray(&PrmArr, "NB_FUR_APC", NB_FUR_APC);
+   m_sql1->IntProcArray(&PrmArr, "NB_ZON_APC", NB_ZON_APC);
+
+   m_sql1->executeNonResultProcedure(Procedure, PrmArr.vtArr, PrmArr.prmArr, PrmArr.sizArr);
+
+   return true;
+} // void
+
+// ******************************************************************************************************
+// SQL_CFG_RTF_UPDATE: Update CFG_RTF Table
+// 
+// Revisions:
+//  Created:      2006-Jun   R.Rabemananjara
+//  Modified:     2016-May   JC.Mitais   LTOP 3.0
+// ******************************************************************************************************
+bool SQL_CFG_RTF_UPDATE (int n_rtf)
+{
+   string Table1 = "CFG_RTF";
+   string Procedure = "[" + (string)BD_PROCESS + "].[dbo].[" + Table1 + "_UPDATE]";
+
+   struct str_PrmArrays PrmArr;
+   VariantInit(&PrmArr.var); 
+
+   m_sql1->IntProcArray  (&PrmArr, "n_rtf", n_rtf);
+   m_sql1->IntProcArray  (&PrmArr, "nb_elt",       rtf_cfg[n_rtf].nb_elt);
+   m_sql1->IntProcArray  (&PrmArr, "nb_ecz",       rtf_cfg[n_rtf].nb_ecz);
+   m_sql1->IntProcArray  (&PrmArr, "nb_rol",       rtf_cfg[n_rtf].nb_rol);
+   m_sql1->IntProcArray  (&PrmArr, "elt_pyro",     rtf_cfg[n_rtf].elt_pyro);
+
+   m_sql1->FloatProcArray(&PrmArr, "width",        rtf_cfg[n_rtf].width);
+   m_sql1->FloatProcArray(&PrmArr, "height",       rtf_cfg[n_rtf].height);
+   m_sql1->FloatProcArray(&PrmArr, "one_rol_mass", rtf_cfg[n_rtf].one_rol_mass);
+   m_sql1->FloatProcArray(&PrmArr, "emi_tub",      rtf_cfg[n_rtf].emi_tub);
+   m_sql1->FloatProcArray(&PrmArr, "emi_wal",      rtf_cfg[n_rtf].emi_wal);
+   m_sql1->FloatProcArray(&PrmArr, "emi_stp",      rtf_cfg[n_rtf].emi_stp);
+   m_sql1->FloatProcArray(&PrmArr, "ff22",         rtf_cfg[n_rtf].ff22);
+   m_sql1->FloatProcArray(&PrmArr, "r_coeff",      rtf_cfg[n_rtf].r_coeff);
+
+   m_sql1->FloatProcArray(&PrmArr, "tub_max_ref", rtf_cfg[n_rtf].tub_max_ref-TK);
+   m_sql1->FloatProcArray(&PrmArr, "tub_min_ref", rtf_cfg[n_rtf].tub_min_ref-TK);
+   m_sql1->FloatProcArray(&PrmArr, "tub_min_min", rtf_cfg[n_rtf].tub_min_min-TK);
+   m_sql1->FloatProcArray(&PrmArr, "max_width",   rtf_cfg[n_rtf].max_width);
+   m_sql1->FloatProcArray(&PrmArr, "min_width",   rtf_cfg[n_rtf].min_width);
+   m_sql1->FloatProcArray(&PrmArr, "max_thick",   rtf_cfg[n_rtf].max_thick);
+   m_sql1->FloatProcArray(&PrmArr, "min_thick",   rtf_cfg[n_rtf].min_thick);
+
+   // for all RTF zones
+   for (int i_zon=0; i_zon < fur_cfg[n_rtf].nb_zon; i_zon++)
+   {
+      string ZON = "_Z" + to_string(i_zon);
+      m_sql1->IntProcArray(&PrmArr,   "FIRST_ECZ"     +ZON, rtf_cfg[n_rtf].FIRST_ECZ[i_zon]);
+      m_sql1->IntProcArray(&PrmArr,   "LAST_ECZ"      +ZON, rtf_cfg[n_rtf].LAST_ECZ[i_zon]);
+      m_sql1->FloatProcArray(&PrmArr, "MAX_POWER"     +ZON, rtf_cfg[n_rtf].MAX_POWER[i_zon]);
+
+      m_sql1->FloatProcArray(&PrmArr, "TUB_MAX_NARROW"+ZON, rtf_cfg[n_rtf].TUB_MAX_NARROW[i_zon]);
+      m_sql1->FloatProcArray(&PrmArr, "TUB_MIN_NARROW"+ZON, rtf_cfg[n_rtf].TUB_MIN_NARROW[i_zon]);
+      m_sql1->FloatProcArray(&PrmArr, "TUB_MAX_WID"   +ZON, rtf_cfg[n_rtf].TUB_MAX_WID[i_zon]);
+      m_sql1->FloatProcArray(&PrmArr, "TUB_MIN_WID"   +ZON, rtf_cfg[n_rtf].TUB_MIN_WID[i_zon]);
+      m_sql1->FloatProcArray(&PrmArr, "TUB_MAX_THICK" +ZON, rtf_cfg[n_rtf].TUB_MAX_THICK[i_zon]);
+      m_sql1->FloatProcArray(&PrmArr, "TUB_MIN_THICK" +ZON, rtf_cfg[n_rtf].TUB_MIN_THICK[i_zon]);
+      m_sql1->FloatProcArray(&PrmArr, "TUB_MAX_THIN"  +ZON, rtf_cfg[n_rtf].TUB_MAX_THIN[i_zon]);
+      m_sql1->FloatProcArray(&PrmArr, "TUB_MIN_THIN"  +ZON, rtf_cfg[n_rtf].TUB_MIN_THIN[i_zon]);
+   } // for all RTF zones
+
+   // For all Elementary Control Zones
+   for (int i_ecz=0; i_ecz < rtf_cfg[n_rtf].nb_ecz; i_ecz++ )
+   { 
+      string ECZ =  "_ECZ" + to_string(i_ecz);
+      m_sql1->FloatProcArray(&PrmArr, "TUBE_AREA"+ECZ, rtf_cfg[n_rtf].TUBE_AREA[i_ecz]);
+
+      for (int jj=0; jj < 2; jj++)
+      {
+         string ECZJ = ECZ + "_" + to_string(jj);
+         m_sql1->IntProcArray(&PrmArr, "CECZ"+ECZJ, rtf_cfg[n_rtf].C_ECZ[jj][i_ecz]);
+      }
+   } // For all Elementary Control Zones
+
+   // For all elements
+   for (int i_elt=0; i_elt < rtf_cfg[n_rtf].nb_elt; i_elt++)
+   {
+      string ELT = "_" + to_string(i_elt);
+      m_sql1->IntProcArray(&PrmArr,   "ELT_WAL"+ELT, int(rtf_cfg[n_rtf].C_ELT[0][i_elt]));
+      m_sql1->IntProcArray(&PrmArr,   "ELT_ROL"+ELT, int(rtf_cfg[n_rtf].C_ELT[1][i_elt]));
+      m_sql1->FloatProcArray(&PrmArr, "ELT_LGT"+ELT,     rtf_cfg[n_rtf].C_ELT[2][i_elt]);
+   } // For all elements
+
+   m_sql1->executeNonResultProcedure(Procedure, PrmArr.vtArr, PrmArr.prmArr, PrmArr.sizArr);
+
+   return true;
+} // void
+
+// ******************************************************************************************************
+// SQL_CFG_FUR_UPDATE: Update CFG_FUR Table
+// 
+// Revisions:
+//  Created:      2006-Jun   R.Rabemananjara
+//  Modified:     2016-May   JC.Mitais   LTOP 3.0
+// ******************************************************************************************************
+bool SQL_CFG_FUR_UPDATE (int n_fur)
+{
+   string Table1 = "CFG_FUR";
+   string Procedure = "[" + (string)BD_PROCESS + "].[dbo].[" + Table1 + "_UPDATE]";
+
+   struct str_PrmArrays PrmArr;
+   VariantInit(&PrmArr.var); 
+
+   m_sql1->IntProcArray   (&PrmArr, "n_fur", n_fur);
+   m_sql1->StringProcArray(&PrmArr, "name",    fur_cfg[n_fur].fur_name);
+   m_sql1->IntProcArray   (&PrmArr, "nb_zon",  fur_cfg[n_fur].nb_zon);
+   m_sql1->FloatProcArray (&PrmArr, "stp_lgt", fur_cfg[n_fur].stp_lgt);
+
+   m_sql1->executeNonResultProcedure(Procedure, PrmArr.vtArr, PrmArr.prmArr, PrmArr.sizArr);
+
+   return true;
+} // void
+
+// ******************************************************************************************************
+// SQL_COILS_DATA_UPDATE: Update COILS_DATA Table
+// 
+// Revisions:
+//  Created:      2006-Jun   R.Rabemananjara
+//  Modified:     2016-May   JC.Mitais   LTOP 3.0
+// ******************************************************************************************************
+bool SQL_COILS_DATA_UPDATE()
+{
+   string Table1 = "COILS_DATA";
+   string Procedure = "[" + (string)BD_PROCESS + "].[dbo].[" + Table1 + "_UPDATE]"; 
+
+   struct str_PrmArrays PrmArr;
+   VariantInit(&PrmArr.var); 
+
+   // For all coils in queue
+   for (int i_coil=0; i_coil < s_coil.nb_coil; i_coil++)          // test
+	{
+      m_sql1->IntProcArray(&PrmArr, "n_coil", i_coil);
+
+      m_sql1->StringProcArray(&PrmArr, "Coil_ID",    s_coil.s_coil_data[i_coil].id);
+      m_sql1->FloatProcArray (&PrmArr, "THI",        s_coil.s_coil_data[i_coil].thi*1000.f);
+      m_sql1->FloatProcArray (&PrmArr, "WID",        s_coil.s_coil_data[i_coil].wid*1000.f);
+      m_sql1->FloatProcArray (&PrmArr, "LGT",        s_coil.s_coil_data[i_coil].lgt);
+      m_sql1->FloatProcArray (&PrmArr, "SPD_MIN",    s_coil.s_coil_data[i_coil].spd_min*60.f);
+      m_sql1->FloatProcArray (&PrmArr, "SPD_MAX",    s_coil.s_coil_data[i_coil].spd*60.f);
+      m_sql1->FloatProcArray (&PrmArr, "SPD_MAX_TH", s_coil.s_coil_data[i_coil].spd_max_th[0]*60.f);
+      m_sql1->IntProcArray   (&PrmArr, "CYCLE",      s_coil.s_coil_data[i_coil].cycle);
+      m_sql1->IntProcArray   (&PrmArr, "STEEL_TYPE", s_coil.s_coil_data[i_coil].steeltype);
+      m_sql1->IntProcArray   (&PrmArr, "N_PDT",      s_coil.s_coil_data[i_coil].N_pdt);
+      m_sql1->IntProcArray   (&PrmArr, "N_CLA",      s_coil.s_coil_data[i_coil].N_cla);
+      m_sql1->IntProcArray   (&PrmArr, "DUMMY_COIL", s_coil.s_coil_data[i_coil].dummy);
+      m_sql1->IntProcArray   (&PrmArr, "BISRA",      s_coil.s_coil_data[i_coil].Bisra);
+      m_sql1->BoolProcArray  (&PrmArr, "VALID",      s_coil.s_coil_data[i_coil].valid);
+
+      // For all furnaces
+      for (int i_fur=0; i_fur < MAX_NB_FUR; i_fur++)
+      {
+         string FUR = "_FUR" + to_string(i_fur);
+         m_sql1->FloatProcArray(&PrmArr, "TMP_TGT"+FUR, s_coil.s_coil_data[i_coil].tmp_tgt[i_fur]-TK);
+         m_sql1->FloatProcArray(&PrmArr, "TMP_UPP"+FUR, s_coil.s_coil_data[i_coil].tmp_upp[i_fur]-TK);
+         m_sql1->FloatProcArray(&PrmArr, "TMP_LOW"+FUR, s_coil.s_coil_data[i_coil].tmp_low[i_fur]-TK);
+      } // For all furnaces
+
+      // For all RTF furnaces
+      for (int i_rtf=0; i_rtf < NB_FUR_RTF; i_rtf++)
+      {
+         string RTF = "_RTF" + to_string(i_rtf);
+         m_sql1->FloatProcArray(&PrmArr, "EMI"+RTF, s_coil.s_coil_data[i_coil].emi_rtf[i_rtf]);
+      } // For all RTF furnaces
+     
+      m_sql1->executeNonResultProcedure(Procedure, PrmArr.vtArr, PrmArr.prmArr, PrmArr.sizArr);
+      PrmArr.sizArr.clear();   PrmArr.prmArr.clear();   PrmArr.vtArr.clear();
+	} // For all coils in queue
+
+
+   // For missing coils
+   for (int i_coil = s_coil.nb_coil; i_coil < MAX_NB_COIL; i_coil++)
+	{
+      m_sql1->IntProcArray(&PrmArr, "n_coil", i_coil);
+
+      m_sql1->StringProcArray(&PrmArr, "Coil_ID",    "");
+      m_sql1->FloatProcArray (&PrmArr, "THI",        -1.f);
+      m_sql1->FloatProcArray (&PrmArr, "WID",        -1.f);
+      m_sql1->FloatProcArray (&PrmArr, "LGT",        -1.f);
+      m_sql1->FloatProcArray (&PrmArr, "SPD_MIN",    -1.f);
+      m_sql1->FloatProcArray (&PrmArr, "SPD_MAX",    -1.f);
+      m_sql1->FloatProcArray (&PrmArr, "SPD_MAX_TH", -1.f);
+      m_sql1->IntProcArray   (&PrmArr, "CYCLE",      -1);
+      m_sql1->IntProcArray   (&PrmArr, "STEEL_TYPE", -1);
+      m_sql1->IntProcArray   (&PrmArr, "N_PDT",      -1);
+      m_sql1->IntProcArray   (&PrmArr, "N_CLA",      -1);
+      m_sql1->IntProcArray   (&PrmArr, "DUMMY_COIL", -1);
+      m_sql1->IntProcArray   (&PrmArr, "BISRA",      -1);
+      m_sql1->BoolProcArray  (&PrmArr, "VALID",      false);
+
+      // For all furnaces
+      for (int i_fur=0; i_fur < MAX_NB_FUR; i_fur++)
+      {
+         string FUR = "_FUR" + to_string(i_fur);
+         m_sql1->FloatProcArray(&PrmArr, "TMP_TGT"+FUR, -1.f);
+         m_sql1->FloatProcArray(&PrmArr, "TMP_UPP"+FUR, -1.f);
+         m_sql1->FloatProcArray(&PrmArr, "TMP_LOW"+FUR, -1.f);
+      } // For all furnaces
+
+      // For all RTF furnaces
+      for (int i_rtf=0; i_rtf < NB_FUR_RTF; i_rtf++)
+      {
+         string RTF = "_RTF" + to_string(i_rtf);
+         m_sql1->FloatProcArray(&PrmArr, "EMI"+RTF, -1.f);
+      } // For all RTF furnaces
+
+      m_sql1->executeNonResultProcedure(Procedure, PrmArr.vtArr, PrmArr.prmArr, PrmArr.sizArr);
+      PrmArr.sizArr.clear();   PrmArr.prmArr.clear();   PrmArr.vtArr.clear();
+   } // For missing coils
+
+   return true;
+} // void
+
+// ******************************************************************************************************
+// SQL_SPG_RTF_UPDATE: Update SPG_RTF Table
+// 
+// Revisions:
+//  Created:      2006-Jun   R.Rabemananjara
+//  Modified:     2016-May   JC.Mitais   LTOP 3.0
+// ******************************************************************************************************
+void SQL_SPG_RTF_UPDATE(int n_rtf)
+{
+   string Table1 = "SPG_RTF";
+   string Procedure = "[" + (string)BD_PROCESS + "].[dbo].[" + Table1 + "_UPDATE]";
+
+   struct str_PrmArrays PrmArr;
+   VariantInit(&PrmArr.var); 
+
+   // For all coils
+   for (int i_coil=0; i_coil < s_coil.nb_coil; i_coil++)
+	{
+      m_sql1->IntProcArray(&PrmArr, "n_rtf", n_rtf);
+      m_sql1->IntProcArray(&PrmArr, "n_coil", i_coil);
+
+      m_sql1->StringProcArray(&PrmArr, "COIL_ID1", s_coil.s_coil_data[i_coil].id);
+      m_sql1->StringProcArray(&PrmArr, "COIL_ID2", s_coil.s_coil_data[i_coil+1].id);
+
+      m_sql1->FloatProcArray(&PrmArr, "TMP_TGT1_TRS", trans_result_rtf[n_rtf][i_coil].tmp_stp_rtf-TK);
+      m_sql1->FloatProcArray(&PrmArr, "TMP_TGT2_TRS", trans_result_rtf[n_rtf][i_coil].tmp_stp_rtf2-TK);
+      m_sql1->FloatProcArray(&PrmArr, "SPD_TRS",      trans_result_rtf[n_rtf][i_coil].spd*60.f);
+      m_sql1->FloatProcArray(&PrmArr, "MAX_SPD_TH", s_coil.s_coil_data[i_coil].spd_max_th[0]*60.f);
+
+      // For all RTF zones
+      for (int i_zon=0; i_zon < fur_cfg[n_rtf].nb_zon; i_zon++)
+      {
+         string ZON = "_Z" + to_string(i_zon);
+         m_sql1->FloatProcArray(&PrmArr, "TUB_TMP"    +ZON, s_coil.s_coil_data[i_coil].tmp_zon[n_rtf][i_zon]-TK);
+         m_sql1->FloatProcArray(&PrmArr, "TUB_POW"    +ZON, s_coil.s_coil_data[i_coil].pow_pct[n_rtf][i_zon]);
+         m_sql1->FloatProcArray(&PrmArr, "TUB_TMP_TRS"+ZON, trans_result_rtf[n_rtf][i_coil].tmp_tub[i_zon]-TK);
+         m_sql1->FloatProcArray(&PrmArr, "TUB_POW_TRS"+ZON, trans_result_rtf[n_rtf][i_coil].pow_pct_rtf[i_zon]);
+      } // For all RTF zones
+
+      // For all RTF elements
+      for (int i_elt=0; i_elt < rtf_cfg[n_rtf].nb_elt; i_elt++)
+      {
+         string ELT = "_" + to_string(i_elt);
+         float stp = -1.f;
+         if ( !rtf[n_rtf].s_elt[i_elt].i_wall ) stp = s_coil.s_coil_data[i_coil].stp_tmp[n_rtf][i_elt] - TK;
+         m_sql1->FloatProcArray(&PrmArr, "STP_TMP"+ELT, stp);
+
+         stp = -1.f;
+         if ( !rtf[n_rtf].s_elt[i_elt].i_wall ) stp = trans_result_rtf[n_rtf][i_coil].stp_rtf[i_elt] - TK;
+         m_sql1->FloatProcArray(&PrmArr, "STP_TMP_TRS"+ELT, stp);
+      } // For all RTF elements
+    
+      m_sql1->executeNonResultProcedure(Procedure, PrmArr.vtArr, PrmArr.prmArr, PrmArr.sizArr);
+      PrmArr.sizArr.clear();   PrmArr.prmArr.clear();   PrmArr.vtArr.clear();
+   } // For all coils
+
+   // For missing coils
+   for (int i_coil = s_coil.nb_coil; i_coil < MAX_NB_COIL; i_coil++)
+	{
+      m_sql1->IntProcArray(&PrmArr, "n_rtf", n_rtf);
+      m_sql1->IntProcArray(&PrmArr, "n_coil", i_coil);
+
+      m_sql1->StringProcArray(&PrmArr, "COIL_ID1", "Nothing");
+      m_sql1->StringProcArray(&PrmArr, "COIL_ID2", "Nothing");
+
+      m_sql1->FloatProcArray(&PrmArr, "TMP_TGT1_TRS", -1.f);
+      m_sql1->FloatProcArray(&PrmArr, "TMP_TGT2_TRS", -1.f);
+      m_sql1->FloatProcArray(&PrmArr, "SPD_TRS",      -1.f);
+      m_sql1->FloatProcArray(&PrmArr, "MAX_SPD_TH",   -1.f);
+
+      // For all RTF zones
+      for (int i_zon=0; i_zon < fur_cfg[n_rtf].nb_zon; i_zon++)
+      {
+         string ZON = "_Z" + to_string(i_zon);
+         m_sql1->FloatProcArray(&PrmArr, "TUB_TMP"    +ZON, -1.f);
+         m_sql1->FloatProcArray(&PrmArr, "TUB_POW"    +ZON, -1.f);
+         m_sql1->FloatProcArray(&PrmArr, "TUB_TMP_TRS"+ZON, -1.f);
+         m_sql1->FloatProcArray(&PrmArr, "TUB_POW_TRS"+ZON, -1.f);
+      } // For all RTF zones
+     
+      // For all RTF elements
+      for (int i_elt=0; i_elt < rtf_cfg[n_rtf].nb_elt; i_elt++)
+      {
+         string ELT = "_" + to_string(i_elt);
+         m_sql1->FloatProcArray(&PrmArr, "STP_TMP"    +ELT, -1.f);
+         m_sql1->FloatProcArray(&PrmArr, "STP_TMP_TRS"+ELT, -1.f);
+      } // For all RTF elements
+    
+      m_sql1->executeNonResultProcedure(Procedure, PrmArr.vtArr, PrmArr.prmArr, PrmArr.sizArr);
+      PrmArr.sizArr.clear();   PrmArr.prmArr.clear();   PrmArr.vtArr.clear();
+   } // For missing coils
+
+   return;
+} // void
+
+// ******************************************************************************************************
+// SQL_SPS_RTF_UPDATE: Update SPS_RTF Table
+// 
+// Revisions:
+//  Created:      2006-Jun   R.Rabemananjara
+//  Modified:     2016-May   JC.Mitais   LTOP 3.0
+// ******************************************************************************************************
+void SQL_SPS_RTF_UPDATE(int n_rtf)
+{
+   string Table1 = "SPS_RTF";
+   string Procedure = "[" + (string)BD_PROCESS + "].[dbo].[" + Table1 + "_UPDATE]";
+
+   struct str_PrmArrays PrmArr;
+   VariantInit(&PrmArr.var); 
+
+   m_sql1->IntProcArray(&PrmArr, "n_rtf", n_rtf);
+   m_sql1->BoolProcArray(&PrmArr, "CTL", sps_entry[n_rtf].s_mea.auto_on);
+   m_sql1->BoolProcArray(&PrmArr, "POW_CTL", true);
+   m_sql1->FloatProcArray(&PrmArr, "INERTIA_TIM", sps_entry[n_rtf].s_trans_coil.anticipation_time);
+   m_sql1->BoolProcArray(&PrmArr, "SPT_VALID", sps_act_sp[n_rtf].Valid);
+   
+   m_sql1->FloatProcArray(&PrmArr, "TMP_STP_SPT", sps_act_sp[n_rtf].tmp_stp-TK);
+   m_sql1->FloatProcArray(&PrmArr, "TMP_STP_MEA", sps_entry[n_rtf].s_mea.tmp_stp-TK);
+   m_sql1->FloatProcArray(&PrmArr, "FBA_STP_I_EXIT", fba_stp[n_rtf].i_exit);
+   m_sql1->BoolProcArray(&PrmArr, "RESTART_OK", sps_act_sp[n_rtf].restart_OK);
+
+   // For all RTF zones
+   for (int i_zon=0; i_zon < fur_cfg[n_rtf].nb_zon; i_zon++)
+   {
+      string ZON = "_Z" + to_string(i_zon);
+
+      m_sql1->FloatProcArray(&PrmArr, "TUB_TMP_MEA"+ZON, sps_entry[n_rtf].s_mea.tmp_zon[i_zon]-TK);
+      m_sql1->FloatProcArray(&PrmArr, "TUB_TMP_SPT"+ZON, sps_act_sp[n_rtf].tmp_zon[i_zon]-TK);
+      m_sql1->FloatProcArray(&PrmArr, "TUB_POW_MEA"+ZON, sps_entry[n_rtf].s_mea.heat_pow_pct[i_zon]);
+      m_sql1->FloatProcArray(&PrmArr, "TUB_POW_SPT"+ZON, sps_act_sp[n_rtf].heat_pow_pct[i_zon]);
+      m_sql1->FloatProcArray(&PrmArr, "FBA_TUB_I_EXIT"+ZON, fba_zon[n_rtf][i_zon].i_exit);
+      m_sql1->BoolProcArray(&PrmArr, "CTL"+ZON, sps_entry[n_rtf].s_mea.on_zone[i_zon]);
+   } // For all RTF zones
+
+   m_sql1->executeNonResultProcedure(Procedure, PrmArr.vtArr, PrmArr.prmArr, PrmArr.sizArr);
+
+   return;
+} // void
+
+// ******************************************************************************************************
+// SQL_SPS_FUR_UPDATE: Update SPS_FUR Table. Concerns all sections but RTF ones.
+// 
+// Revisions:
+//  Created:      2006-Jun   R.Rabemananjara
+//  Modified:     2016-May   JC.Mitais   LTOP 3.0
+// ******************************************************************************************************
+void SQL_SPS_FUR_UPDATE(int n_fur)
+{
+   string Table1 = "SPS_FUR";
+   string Procedure = "[" + (string)BD_PROCESS + "].[dbo].[" + Table1 + "_UPDATE]";
+
+   struct str_PrmArrays PrmArr;
+   VariantInit(&PrmArr.var); 
+
+   m_sql1->IntProcArray(&PrmArr, "n_fur", n_fur);
+   m_sql1->BoolProcArray(&PrmArr, "CTL", sps_entry[n_fur].s_mea.auto_on);
+   m_sql1->BoolProcArray(&PrmArr, "SPT_VALID", sps_act_sp[n_fur].Valid);
+   m_sql1->FloatProcArray(&PrmArr, "TMP_STP_MEA", sps_entry[n_fur].s_mea.tmp_stp-TK);
+   m_sql1->FloatProcArray(&PrmArr, "TMP_STP_SPT", sps_act_sp[n_fur].tmp_stp-TK);
+   m_sql1->FloatProcArray(&PrmArr, "INERTIA_TIM", sps_entry[n_fur].s_trans_coil.anticipation_time);
+   m_sql1->FloatProcArray(&PrmArr, "FBA_STP_I_EXIT", fba_stp[n_fur].i_exit);
+
+   // For all zones
+   for (int i_zon=0; i_zon < fur_cfg[n_fur].nb_zon; i_zon++)
+   {
+      string ZON = "_Z" + to_string(i_zon);
+
+      m_sql1->BoolProcArray(&PrmArr, "CTL"+ZON, sps_entry[n_fur].s_mea.on_zone[i_zon]);
+      m_sql1->FloatProcArray(&PrmArr, "FBA_I_EXIT"  +ZON, fba_zon[n_fur][i_zon].i_exit);
+      m_sql1->FloatProcArray(&PrmArr, "TMP_SPT"     +ZON, sps_act_sp[n_fur].tmp_zon[i_zon]);
+      m_sql1->FloatProcArray(&PrmArr, "TMP_MEA"     +ZON, sps_entry[n_fur].s_mea.tmp_zon[i_zon]);
+      m_sql1->FloatProcArray(&PrmArr, "HEAT_POW_SPT"+ZON, sps_act_sp[n_fur].heat_pow_pct[i_zon]);
+      m_sql1->FloatProcArray(&PrmArr, "HEAT_POW_MEA"+ZON, sps_entry[n_fur].s_mea.heat_pow_pct[i_zon]);
+      m_sql1->FloatProcArray(&PrmArr, "COOL_POW_SPT"+ZON, sps_act_sp[n_fur].cool_pow_pct[i_zon]);
+      m_sql1->FloatProcArray(&PrmArr, "COOL_POW_MEA"+ZON, sps_entry[n_fur].s_mea.cool_pow_pct[i_zon]);
+   } // For all zones
+
+   m_sql1->executeNonResultProcedure(Procedure, PrmArr.vtArr, PrmArr.prmArr, PrmArr.sizArr);
+ 
+   return;
+} // void
+
+// ******************************************************************************************************
+// SQL_TRACKING_UPDATE: Update TRACKING Table. 
+// 
+// Revisions:
+//  Created:      2006-Jun   R.Rabemananjara
+//  Modified:     2016-May   JC.Mitais   LTOP 3.0
+// ******************************************************************************************************
+void SQL_TRACKING_UPDATE()
+{
+   string Table1 = "TRACKING";
+   string Procedure = "[" + (string)BD_PROCESS + "].[dbo].[" + Table1 + "_UPDATE]";
+
+   struct str_PrmArrays PrmArr;
+   VariantInit(&PrmArr.var); 
+
+   m_sql1->BoolProcArray(&PrmArr,  "SPD_CTL", sps_entry[RTH].s_mea.spd_auto);
+   m_sql1->BoolProcArray(&PrmArr,  "SPD_VAL", sps_act_sp[RTH].Spd_Valid);
+   m_sql1->FloatProcArray(&PrmArr, "SPD_SPT", sps_act_sp[RTH].spd*60.f);
+   m_sql1->FloatProcArray(&PrmArr, "SPD_MEA", sps_entry[RTH].s_mea.spd*60.f);
+   m_sql1->IntProcArray(&PrmArr, "COM_ERROR", ErrorComOPC);
+   m_sql1->FloatProcArray(&PrmArr, "RTF_WLD_POS", sps_entry[RTH].s_mea.lgt);
+
+   // For all furnaces
+   for (int i_fur=0; i_fur < MAX_NB_FUR; i_fur++)
+   {
+      string FUR = "_F" + to_string(i_fur);
+      m_sql1->FloatProcArray(&PrmArr, "ENTRY_STRIP_LGT"+FUR, sps_entry[i_fur].s_mea.lgt);
+      m_sql1->FloatProcArray(&PrmArr, "CAL_STRIP_TIM"  +FUR, sps_entry[i_fur].s_mea.tim/60.f);
+   } // For all furnaces
+
+   m_sql1->executeNonResultProcedure(Procedure, PrmArr.vtArr, PrmArr.prmArr, PrmArr.sizArr);
+
+   return;
+} // void
+
+// ******************************************************************************************************
+// SQL_EMISSIVITY_UPDATE: Update EMISSIVITY Table. 
+// 
+// Revisions:
+//  Created:      2006-Jun   R.Rabemananjara
+//  Modified:     2016-May   JC.Mitais   LTOP 3.0
+// ******************************************************************************************************
+void SQL_EMISSIVITY_UPDATE(int n_rtf)
+{
+   string Table1 = "EMISSIVITY";
+   string Procedure = "[" + (string)BD_PROCESS + "].[dbo].[" + Table1 + "_UPDATE]";
+
+   struct str_PrmArrays PrmArr;
+   VariantInit(&PrmArr.var); 
+
+   // For all classes
+   for ( int i_cla=0; i_cla < MAX_NB_CLA; i_cla++)
+   {
+      // For all products
+		for ( int i_pdt=0; i_pdt < MAX_NB_PDT; i_pdt++)
+		{
+         m_sql1->IntProcArray(&PrmArr, "n_rtf", n_rtf);
+         m_sql1->IntProcArray(&PrmArr, "n_CLA", i_cla);
+         m_sql1->IntProcArray(&PrmArr, "n_PDT", i_pdt);
+
+         m_sql1->FloatProcArray(&PrmArr,  "ALPHA",      s_adp[n_rtf].s_pdt_RTF[i_cla][i_pdt].alpha);
+         m_sql1->StringProcArray(&PrmArr, "STEEL_CODE", s_adp[n_rtf].s_pdt_RTF[i_cla][i_pdt].Steel_code);
+
+         m_sql1->executeNonResultProcedure(Procedure, PrmArr.vtArr, PrmArr.prmArr, PrmArr.sizArr);
+         PrmArr.sizArr.clear();   PrmArr.prmArr.clear();   PrmArr.vtArr.clear();
+		} // For all products
+   } // For all classes
+   
+   return;
+} // void
+
+// ******************************************************************************************************
+// SQL_EFFICIENCY_UPDATE: Update EFFICIENCY Table. 
+// 
+// Revisions:
+//  Created:      2006-Jun   R.Rabemananjara
+//  Modified:     2016-May   JC.Mitais   LTOP 3.0
+// ******************************************************************************************************
+bool SQL_EFFICIENCY_UPDATE(int n_rtf)
+{
+   string Table1 = "EFFICIENCY";
+   string Procedure = "[" + (string)BD_PROCESS + "].[dbo].[" + Table1 + "_UPDATE]";
+
+   struct str_PrmArrays PrmArr;
+   VariantInit(&PrmArr.var); 
+
+   m_sql1->IntProcArray(&PrmArr, "n_rtf", n_rtf);
+   // For all RTF zones
+   for ( int i_zon=0; i_zon < fur_cfg[n_rtf].nb_zon; i_zon++)
+   {
+      string ZON = "_Z" + to_string(i_zon);
+      m_sql1->FloatProcArray(&PrmArr, "EFFI_TUB"+ZON, s_adp[n_rtf].Effi[i_zon]);
+   } // For all RTF zones
+
+   m_sql1->executeNonResultProcedure(Procedure, PrmArr.vtArr, PrmArr.prmArr, PrmArr.sizArr);
+
+   return true;
+} // void
+
+// ******************************************************************************************************
+// SQL_ADAPTATION_UPDATE: Update EFFICIENCY Table. 
+// 
+// Revisions:
+//  Created:      2006-Jun   R.Rabemananjara
+//  Modified:     2016-May   JC.Mitais   LTOP 3.0
+// ******************************************************************************************************
+bool SQL_ADAPTATION_UPDATE(int n_rtf)
+{
+   string Table1 = "ADAPTATION";
+   string Procedure = "[" + (string)BD_PROCESS + "].[dbo].[" + Table1 + "_UPDATE]";
+
+   struct str_PrmArrays PrmArr;
+   VariantInit(&PrmArr.var); 
+
+   m_sql1->IntProcArray(&PrmArr, "n_rtf", n_rtf);
+   m_sql1->FloatProcArray(&PrmArr, "ALPHA_EXC", s_adp[n_rtf].s_exg.Alpha);
+   m_sql1->FloatProcArray(&PrmArr, "ALPHA_ANT", s_adp[n_rtf].s_ant.Alpha);
+
+   m_sql1->executeNonResultProcedure(Procedure, PrmArr.vtArr, PrmArr.prmArr, PrmArr.sizArr);
+
+   return true;
+} // void
+
+// ******************************************************************************************************
+// SQL_ROL_CFG_UPDATE: Insert new records in ROL_CFG Table. 
+// 
+// Revisions:
+//  Created:      2006-Jun   R.Rabemananjara
+//  Modified:     2016-May   JC.Mitais   LTOP 3.0
+// ******************************************************************************************************
+bool SQL_ROL_CFG_UPDATE(int n_rtf)
+{
+   string Table1 = "ROL_CFG";
+   string Procedure = "[" + (string)BD_PROCESS + "].[dbo].[" + Table1 + "_UPDATE]";
+
+   struct str_PrmArrays PrmArr;
+   VariantInit(&PrmArr.var); 
+
+   m_sql1->IntProcArray(&PrmArr, "n_rtf", n_rtf);
+   m_sql1->IntProcArray(&PrmArr,   "ROL_INDIC",       rol_cfg[n_rtf].rol_indic);
+   m_sql1->FloatProcArray(&PrmArr, "ROL_DIA",         rol_cfg[n_rtf].dia);
+   m_sql1->FloatProcArray(&PrmArr, "ROL_L1",          rol_cfg[n_rtf].L1);
+   m_sql1->FloatProcArray(&PrmArr, "ROL_L2",          rol_cfg[n_rtf].L2);
+   m_sql1->FloatProcArray(&PrmArr, "ROL_L3",          rol_cfg[n_rtf].L3);
+   m_sql1->FloatProcArray(&PrmArr, "ROL_C1",          rol_cfg[n_rtf].C1);
+   m_sql1->FloatProcArray(&PrmArr, "ROL_C2",          rol_cfg[n_rtf].C2);
+   m_sql1->FloatProcArray(&PrmArr, "ROL_EMI_OUTSIDE", rol_cfg[n_rtf].emi_outside);
+   m_sql1->FloatProcArray(&PrmArr, "ROL_THICK",       rol_cfg[n_rtf].thick);
+
+   m_sql1->IntProcArray(&PrmArr,   "SHIELD_INDIC",    rol_cfg[n_rtf].shield_indic);
+   m_sql1->FloatProcArray(&PrmArr, "SHIELD_EMI",      rol_cfg[n_rtf].shield_emi);
+   m_sql1->FloatProcArray(&PrmArr, "SHIELD_WIDTH",    rol_cfg[n_rtf].shield_wid);
+
+   m_sql1->executeNonResultProcedure(Procedure, PrmArr.vtArr, PrmArr.prmArr, PrmArr.sizArr);
+   PrmArr.sizArr.clear();   PrmArr.prmArr.clear();   PrmArr.vtArr.clear();
+  
+   return true;
+} // void
+
+// *******************
+// UPDATE SQL_CkeckHMI
+// *******************
+bool SQL_Upd_CkeckHMI_Record_IDX()
+{
+   string Table1 = "Check_HMI";
+   string Procedure = "[" + (string)BD_PROCESS + "].[dbo].[" + Table1 + "_UPDATE_record_IDX]"; 
+
+   struct str_PrmArrays PrmArr;
+   VariantInit(&PrmArr.var); 
+
+   m_sql1->IntProcArray(&PrmArr, "Record_IDX", s_cur.record_IDX);
+
+   m_sql1->executeNonResultProcedure(Procedure, PrmArr.vtArr, PrmArr.prmArr, PrmArr.sizArr);
+
+   return true;
+} // void
+
+// *******************************
+// UPDATE SQL_CkeckHMI (set False)
+// *******************************
+bool SQL_Upd_CkeckHMI()
+{
+   string Table1 = "Check_HMI";
+   string Procedure = "[" + (string)BD_PROCESS + "].[dbo].[" + Table1 + "_UPDATE]";
+
+   m_sql1->executeNonResultProcedure(Procedure);
+  
+   return true;
+} // void
+
+// ******************************************************************************************************
+// SQL_HIS_INSERT: Insert new records in HIS Table. 
+// 
+// Revisions:
+//  Created:      2006-Jun   R.Rabemananjara
+//  Modified:     2016-May   JC.Mitais   LTOP 3.0
+// ******************************************************************************************************
+bool SQL_HIS_INSERT()
+{
+   string Table1 = "HIS";
+   string Procedure = "[" + (string)BD_PROCESS + "].[dbo].[" + Table1 + "_INSERT]";
+
+   struct str_PrmArrays PrmArr;
+   VariantInit(&PrmArr.var); 
+	
+   // Current coil
+   // ------------
+   //m_sql1->StringProcArray(&PrmArr, "COIL_ID", s_line_trk.coil_id);
+   //m_sql1->FloatProcArray(&PrmArr, "COIL_THI", sps_entry[RTH].s_cur_coil.thi*1000.f);
+   //m_sql1->FloatProcArray(&PrmArr, "COIL_WID", sps_entry[RTH].s_cur_coil.wid*1000.f);
+
+   // SPEED
+   // -----
+   //m_sql1->FloatProcArray(&PrmArr, "SPD_SPT", s_coil.s_coil_data[0].spd_max_th[RTH]*60.f);
+   m_sql1->FloatProcArray(&PrmArr, "SPD_SPT",   sps_act_sp[RTH].spd*60.f);
+   m_sql1->FloatProcArray(&PrmArr, "SPD_MEA",   sps_entry[RTH].s_mea.spd*60.f);
+   m_sql1->BoolProcArray (&PrmArr, "SPD_CTL",   sps_entry[RTH].s_mea.spd_auto);
+   m_sql1->BoolProcArray (&PrmArr, "SPD_VALID", sps_act_sp[RTH].Spd_Valid);
+
+   // RTF
+   // ---
+   // For all RTF furnaces
+   for (int i_rtf=0; i_rtf < NB_FUR_RTF; i_rtf++)
+   {
+      string RTF = "_F" + to_string(i_rtf);
+
+      m_sql1->FloatProcArray(&PrmArr, "COIL_EMI" +RTF, s_coil.s_coil_data[0].emi_rtf[i_rtf]);
+      m_sql1->BoolProcArray(&PrmArr, "POW_CTL"   +RTF, sps_act_sp[i_rtf].ctl_pow);
+      m_sql1->BoolProcArray(&PrmArr, "RESTART_OK"+RTF, sps_act_sp[i_rtf].restart_OK);
+      m_sql1->FloatProcArray(&PrmArr, "RISK"     +RTF, sps_act_sp[i_rtf].Risk);
+   } // For all RTF furnaces
+
+   // FUR
+   // ---
+   // For all furnaces
+   for (int i_fur=0; i_fur < MAX_NB_FUR; i_fur++)
+   {
+      string FUR = "_F" + to_string(i_fur);
+
+      m_sql1->BoolProcArray(&PrmArr, "CTL"         +FUR, sps_entry[i_fur].s_mea.auto_on);
+      m_sql1->BoolProcArray(&PrmArr, "VALID"       +FUR, sps_act_sp[i_fur].Valid);
+      m_sql1->FloatProcArray(&PrmArr, "COIL_THI"   +FUR, sps_entry[i_fur].s_cur_coil.thi*1000.f);
+      m_sql1->FloatProcArray(&PrmArr, "COIL_WID"   +FUR, sps_entry[i_fur].s_cur_coil.wid*1000.f);
+
+      m_sql1->FloatProcArray(&PrmArr, "TMP_STP_TGT"+FUR, sps_entry[i_fur].s_cur_coil.tmp_tgt-TK);
+      m_sql1->FloatProcArray(&PrmArr, "TMP_STP_UPP"+FUR, sps_entry[i_fur].s_cur_coil.tmp_upp-TK);
+      m_sql1->FloatProcArray(&PrmArr, "TMP_STP_LOW"+FUR, sps_entry[i_fur].s_cur_coil.tmp_low-TK);
+
+      if (sps_entry[i_fur].s_mea.nCurCoil == -1 || i_fur == 0)
+      {
+         //m_sql1->StringProcArray(&PrmArr, "COIL_ID"+FUR, s_line_trk.coil_id);
+         m_sql1->StringProcArray(&PrmArr, "COIL_ID"+FUR, s_coil.s_coil_data[0].id);
+         //m_sql1->FloatProcArray(&PrmArr, "COIL_THI"+FUR, sps_entry[RTH].s_cur_coil.thi*1000.f);
+         //m_sql1->FloatProcArray(&PrmArr, "COIL_WID"+FUR, sps_entry[RTH].s_cur_coil.wid*1000.f);
+
+         //m_sql1->FloatProcArray(&PrmArr, "TMP_STP_TGT"+FUR, sps_entry[i_fur].s_cur_coil.tmp_tgt-TK);
+         //m_sql1->FloatProcArray(&PrmArr, "TMP_STP_UPP"+FUR, sps_entry[i_fur].s_cur_coil.tmp_upp-TK);
+         //m_sql1->FloatProcArray(&PrmArr, "TMP_STP_LOW"+FUR, sps_entry[i_fur].s_cur_coil.tmp_low-TK);
+      }
+
+      else
+      {
+         int n_coil = sps_entry[i_fur].s_mea.nCurCoil;
+         m_sql1->StringProcArray(&PrmArr, "COIL_ID"+FUR, s_coil.s_coil_data_last[n_coil].id);
+         //m_sql1->FloatProcArray(&PrmArr, "COIL_THI"+FUR, s_coil.s_coil_data_last[n_coil].thi*1000.f);
+         //m_sql1->FloatProcArray(&PrmArr, "COIL_WID"+FUR, s_coil.s_coil_data_last[n_coil].wid*1000.f);
+
+         //m_sql1->FloatProcArray(&PrmArr, "TMP_STP_TGT"+FUR, s_coil.s_coil_data_last[n_coil].tmp_tgt[i_fur]-TK);
+         //m_sql1->FloatProcArray(&PrmArr, "TMP_STP_UPP"+FUR, s_coil.s_coil_data_last[n_coil].tmp_upp[i_fur]-TK);
+         //m_sql1->FloatProcArray(&PrmArr, "TMP_STP_LOW"+FUR, s_coil.s_coil_data_last[n_coil].tmp_low[i_fur]-TK);
+      }
+		if (sps_act_sp[i_fur].tmp_stp > 450.f)
+			m_sql1->FloatProcArray(&PrmArr, "TMP_STP_SPT"+FUR, sps_act_sp[i_fur].tmp_stp-TK);
+		else
+			m_sql1->FloatProcArray(&PrmArr, "TMP_STP_SPT"+FUR, sps_entry[i_fur].s_cur_coil.tmp_tgt-TK);
+      m_sql1->FloatProcArray(&PrmArr, "TMP_STP_MEA"+FUR, sps_entry[i_fur].s_mea.tmp_stp-TK);
+
+      // For all zones
+      for (int i_zon=0; i_zon < fur_cfg[i_fur].nb_zon; i_zon++)
+	   {
+         string FZON = FUR + "_Z" + to_string(i_zon);
+         m_sql1->BoolProcArray(&PrmArr, "CTL"+FZON, sps_entry[i_fur].s_mea.on_zone[i_zon]);
+
+         m_sql1->FloatProcArray(&PrmArr, "TMP_SPT"     +FZON, sps_act_sp[i_fur].tmp_zon[i_zon]-TK);
+         m_sql1->FloatProcArray(&PrmArr, "TMP_MEA"     +FZON, sps_entry[i_fur].s_mea.tmp_zon[i_zon]-TK);
+         m_sql1->FloatProcArray(&PrmArr, "HEAT_POW_SPT"+FZON, sps_act_sp[i_fur].heat_pow_pct[i_zon]);
+         m_sql1->FloatProcArray(&PrmArr, "HEAT_POW_MEA"+FZON, sps_entry[i_fur].s_mea.heat_pow_pct[i_zon]);
+         if (i_fur >= NB_FUR_RTF && i_fur != OVG)
+         {
+            m_sql1->FloatProcArray(&PrmArr, "COOL_POW_SPT"+FZON, sps_act_sp[i_fur].cool_pow_pct[i_zon]);
+            m_sql1->FloatProcArray(&PrmArr, "COOL_POW_MEA"+FZON, sps_entry[i_fur].s_mea.cool_pow_pct[i_zon]);
+         }
+	   } // For all RTF zones
+   } // For all furnaces+
+	
+   m_sql1->FloatProcArray(&PrmArr, "RTH_STP_PID_P",   	fba_stp[RTH].p);
+   m_sql1->FloatProcArray(&PrmArr, "RTH_STP_PID_I",	   fba_stp[RTH].i);
+   m_sql1->FloatProcArray(&PrmArr, "RTH_STP_I_EXIT",  fba_stp[RTH].i_exit);
+   m_sql1->FloatProcArray(&PrmArr, "RTH_STP_PID_EXIT",fba_stp[RTH].pid_exit);
+
+   m_sql1->FloatProcArray(&PrmArr, "RTH_Z4_PID_P",		fba_zon[RTH][4].p);
+   m_sql1->FloatProcArray(&PrmArr, "RTH_Z4_PID_I",		fba_zon[RTH][4].i);
+   m_sql1->FloatProcArray(&PrmArr, "RTH_Z4_I_EXIT",   	fba_zon[RTH][4].i_exit);
+   m_sql1->FloatProcArray(&PrmArr, "RTH_Z4_PID_EXIT", fba_zon[RTH][4].pid_exit);
+
+	m_sql1->BoolProcArray(&PrmArr, "JET_CASCADE",	s_fur_mea[JET].fan_mode);
+   m_sql1->BoolProcArray(&PrmArr, "DUM", sps_entry[RTH].s_cur_coil.dummy == 1);
+
+
+   m_sql1->executeNonResultProcedure(Procedure, PrmArr.vtArr, PrmArr.prmArr, PrmArr.sizArr);
+
+   return true;
+} // void
+
+// ******************************************************************************************************
+// SQL_EMI_HIS_INSERT: Insert new records in EMI_HIS Table.
+// 
+// Revisions:
+//  Created:      2006-Jun   R.Rabemananjara
+//  Modified:     2016-May   JC.Mitais   LTOP 3.0
+// ******************************************************************************************************
+bool SQL_EMI_HIS_INSERT ()
+{
+   string Table1 = "EMI_HIS";
+   string Procedure = "[" + (string)BD_PROCESS + "].[dbo].[" + Table1 + "_INSERT]";
+
+   struct str_PrmArrays PrmArr;
+   VariantInit(&PrmArr.var);
+
+   //if (s_coil.s_coil_data_last[0].id  !=  s_coil.s_coil_data[0].id && s_coil.s_coil_data_last[0].id != "")//if (s_coil.s_coil_data_last[0].id != "")
+   if (s_coil.s_coil_data_last[0].id != "")                                                           // test
+   {
+      m_sql1->StringProcArray(&PrmArr, "COIL_ID",    s_coil.s_coil_data_last[0].id);
+      m_sql1->StringProcArray(&PrmArr, "STEEL_CODE", s_coil.s_coil_data_last[0].Steel_code);
+      m_sql1->IntProcArray(&PrmArr,    "n_CLA",      s_coil.s_coil_data_last[0].N_cla);
+      m_sql1->IntProcArray(&PrmArr,    "n_PDT",      s_coil.s_coil_data_last[0].N_pdt);
+
+      // For all RTF furnaces
+      for (int i_rtf=0; i_rtf < NB_FUR_RTF; i_rtf++)
+      {
+         string RTF = "_F" + to_string(i_rtf);
+         m_sql1->FloatProcArray(&PrmArr, "EMI"+RTF, s_coil.s_coil_data_last[0].emi_rtf[i_rtf]);
+      } // For all RTF furnaces
+
+      m_sql1->executeNonResultProcedure(Procedure, PrmArr.vtArr, PrmArr.prmArr, PrmArr.sizArr);
+      /* Store Identity of first coil in queue*/
+      //s_coil.s_coil_data_last[0].id = s_coil.s_coil_data[0].id;                                     // test
+   } 
+
+   return true;
+} // void
+
+// ******************************************************************************************************
+// SQL_ROL_HIS_INSERT: Insert new records in ROL_HIS Table.
+// 
+// Revisions:
+//  Created:      2006-Jun   R.Rabemananjara
+//  Modified:     2016-May   JC.Mitais   LTOP 3.0
+// ******************************************************************************************************
+bool SQL_ROL_HIS_INSERT( int Idx_Rec, int Idx_Pt, float risk, float wid, float thi,
+                         float stp_tmp, float roll_tmp, float tub_tmp, float mesh[], int n_rtf )
+{
+   string Table1 = "ROL_HIS";
+   string Procedure = "[" + (string)BD_PROCESS + "].[dbo].[" + Table1 + "_INSERT]";
+
+   struct str_PrmArrays PrmArr;
+   VariantInit(&PrmArr.var);
+
+   m_sql1->IntProcArray(&PrmArr, "n_rtf", n_rtf);
+   m_sql1->IntProcArray(&PrmArr, "IDX_REC_P", Idx_Pt);
+   m_sql1->FloatProcArray(&PrmArr, "RISK", risk);
+   m_sql1->FloatProcArray(&PrmArr, "STP_WID", wid * 1000.f);
+   m_sql1->FloatProcArray(&PrmArr, "STP_THI", thi * 1000.f);
+   m_sql1->FloatProcArray(&PrmArr, "STP_TMP", stp_tmp-TK);
+   m_sql1->FloatProcArray(&PrmArr, "ROL_TMP", roll_tmp-TK);
+   m_sql1->FloatProcArray(&PrmArr, "TUB_TMP", tub_tmp-TK);
+
+   // For all mesh cells
+   for (int i_mesh=0; i_mesh < MAX_NB_MESH; i_mesh ++)
+   {
+      string MESH = "_" + to_string(i_mesh);
+      m_sql1->FloatProcArray(&PrmArr, "MESH"+MESH, mesh[i_mesh]);
+   } // For all mesh cells
+
+   m_sql1->executeNonResultProcedure(Procedure, PrmArr.vtArr, PrmArr.prmArr, PrmArr.sizArr);
+  
+   return true;
+} // void
+
+// ******************************************************************************************************
+// SQL_TRACES_INSERT: Insert new records in TRACES Table. 
+// 
+// Revisions:
+//  Created:      2006-Jun   R.Rabemananjara
+//  Modified:     2016-May   JC.Mitais   LTOP 3.0
+// ******************************************************************************************************
+bool SQL_TRACES_INSERT(string LevelTxt, string Module, string Method, string Message)
+{
+   string Table1 = "PRO_TRACES";
+   string Procedure = "[" + (string)BD_PROCESS + "].[dbo].[" + Table1 + "_INSERT]";
+
+   struct str_PrmArrays PrmArr;
+   VariantInit(&PrmArr.var);
+
+   m_sql1->StringProcArray(&PrmArr, "LevelTxt", LevelTxt);
+   m_sql1->StringProcArray(&PrmArr, "Module", Module);
+   m_sql1->StringProcArray(&PrmArr, "Method", Method);
+   m_sql1->StringProcArray(&PrmArr, "Message", Message);
+
+   m_sql1->executeNonResultProcedure(Procedure, PrmArr.vtArr, PrmArr.prmArr, PrmArr.sizArr);
+
+   return true;
+} // void
