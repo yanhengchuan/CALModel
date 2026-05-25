@@ -73,10 +73,10 @@ enum SEC
    TNL = -1,
    SLW = 2,
    JET = 3,
-   EXT = -1,
-   APC = -1,
    OVG = 4,
    FCS = 5,
+   EXT = 6,
+   APC = 7,
 };
 
 // GENERAL 
@@ -87,7 +87,7 @@ enum SEC
 #define USE_ROLL_CAL       true     // If horizontal rtf furnace don't use roll calulation
 #define MAX_ITER           100
 
-#define MAX_NB_FUR 6
+#define MAX_NB_FUR 8
 
 #define NB_FUR_RTF   2     // Number of RTH sections
 #define NB_FUR_TNL   0     // Number of TNL sections
@@ -95,8 +95,8 @@ enum SEC
 #define NB_FUR_JET   1     // Number of JET sections
 #define NB_FUR_OVG	1     // Number of OVG sections
 #define NB_FUR_FCS	1     // Number of FCS sections
-#define NB_FUR_EXT	0     // Number of EXT sections
-#define NB_FUR_APC	0     // Number of APC sections
+#define NB_FUR_EXT	1     // Number of EXT sections
+#define NB_FUR_APC	1     // Number of APC sections
 
 // PREHEATING
 // ==========

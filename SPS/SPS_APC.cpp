@@ -15,7 +15,6 @@ bool SPS_APC(struct sps_coil_data sps_fin_sp_apc)
    bool status = true;
    string sub_name = "SPS_APC";
 
-   // Initialize pv with strip temperature measurement and sp with temperature target
    fba_stp[APC].pv = sps_entry[APC].s_mea.tmp_stp;
    fba_stp[APC].sp = sps_entry[APC].s_cur_coil.tmp_tgt;
 
@@ -24,14 +23,10 @@ bool SPS_APC(struct sps_coil_data sps_fin_sp_apc)
 
    if ( fba_stp[APC].sp <= 0.f ) fba_stp[APC].sp = fba_stp[APC].pv;
 
-   // If the power is everywhere at max, we don't try to increase it
    fba_stp[APC].max_exit = 50.f;
-
-   // If the power is everywhere at min, we don't try to decrease it
-   fba_stp[APC].min_exit = - 50.f;
+   fba_stp[APC].min_exit = -50.f;
 
    sps_act_sp[APC].ctl_pow = true;
-   // PID calculation
    if ( sps_entry[APC].s_mea.auto_on )
    {
       fba_stp[APC].reset = false;
@@ -42,32 +37,23 @@ bool SPS_APC(struct sps_coil_data sps_fin_sp_apc)
          return status;
       }
    }
-
    else
    {
+      float avg_tmp = 0.f;
       fba_stp[APC].reset = true;
-      float avg_pow = 0.f;
-      // For all zones
-      for ( int i_zon=0; i_ i_zon++ )
-      {
-         avg_pow += sps_entry[APC].s_mea.cool_pow_pct[i_zon];
-      } // For all zones
-      avg_pow /= float(NB_ZON_APC);
-
-      fba_stp[APC].i_exit = avg_pow - 50.f - fba_stp[APC].p * (fba_stp[APC].sp - fba_stp[APC].pv);
+      for ( int i_zon=0; i_zon < NB_ZON_APC; i_zon++ ) avg_tmp += sps_entry[APC].s_mea.tmp_zon[i_zon];
+      avg_tmp /= float(NB_ZON_APC);
+      fba_stp[APC].i_exit = avg_tmp - fba_stp[APC].pv - fba_stp[APC].p * (fba_stp[APC].sp - fba_stp[APC].pv);
       fba_stp[APC].i_exit = max(fba_stp[APC].i_exit, fba_stp[APC].min_exit);
       fba_stp[APC].i_exit = min(fba_stp[APC].i_exit, fba_stp[APC].max_exit);
    }
-   
-   // Storing power set points
-   // -------------------------
-   // for all zones
+
    for ( int i_zon=0; i_zon < NB_ZON_APC; i_zon++ )
    {
-      sps_act_sp[APC].cool_pow_pct[i_zon] = 50.f + fba_stp[APC].pid_exit;
-      sps_act_sp[APC].cool_pow_pct[i_zon] = min( sps_act_sp[APC].cool_pow_pct[i_zon], 100.f );
-      sps_act_sp[APC].cool_pow_pct[i_zon] = max( sps_act_sp[APC].cool_pow_pct[i_zon],   0.f );
-   } // for all zones
+      sps_act_sp[APC].tmp_zon[i_zon] = fba_stp[APC].sp + fba_stp[APC].pid_exit;
+      sps_act_sp[APC].tmp_zon[i_zon] = min( sps_act_sp[APC].tmp_zon[i_zon], 1000.f );
+      sps_act_sp[APC].tmp_zon[i_zon] = max( sps_act_sp[APC].tmp_zon[i_zon], 300.f );
+   }
 
    return status;
 } // void

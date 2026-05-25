@@ -59,6 +59,12 @@ bool SQL2_R_MSG_COIL()
          s_line_coil[i_coil].tmp_tgt[FCS] = (float)recordset->Fields->GetItem(L"TMP_TGT_FCS")->GetValue().dblVal;
          s_line_coil[i_coil].tmp_upp[FCS] = (float)recordset->Fields->GetItem(L"TMP_UPP_FCS")->GetValue().dblVal;
          s_line_coil[i_coil].tmp_low[FCS] = (float)recordset->Fields->GetItem(L"TMP_LOW_FCS")->GetValue().dblVal;
+         s_line_coil[i_coil].tmp_tgt[EXT] = (float)recordset->Fields->GetItem(L"TMP_TGT_EXT")->GetValue().dblVal;
+         s_line_coil[i_coil].tmp_upp[EXT] = (float)recordset->Fields->GetItem(L"TMP_UPP_EXT")->GetValue().dblVal;
+         s_line_coil[i_coil].tmp_low[EXT] = (float)recordset->Fields->GetItem(L"TMP_LOW_EXT")->GetValue().dblVal;
+         s_line_coil[i_coil].tmp_tgt[APC] = (float)recordset->Fields->GetItem(L"TMP_TGT_APC")->GetValue().dblVal;
+         s_line_coil[i_coil].tmp_upp[APC] = (float)recordset->Fields->GetItem(L"TMP_UPP_APC")->GetValue().dblVal;
+         s_line_coil[i_coil].tmp_low[APC] = (float)recordset->Fields->GetItem(L"TMP_LOW_APC")->GetValue().dblVal;
       } // try
 
       // Error control
@@ -189,6 +195,22 @@ bool SQL2_R_MEA_HEA()
             VarVal = "FCS_ZON_PWR_MEA_" + to_string(i_zon);
             s_fur_mea[FCS].cool_pow_pct[i_zon] = (float)recordset->Fields->GetItem(VarVal.c_str())->GetValue().dblVal; 
          } // For all zones
+
+         s_fur_mea[EXT].ctl = (recordset->Fields->GetItem(L"EXT_CTL")->GetValue().boolVal != 0);
+         s_fur_mea[EXT].stp_tmp = (float)recordset->Fields->GetItem(L"EXT_TMP_STRIP_MEA")->GetValue().dblVal;
+         for (int i_zon = 0; i_zon < NB_ZON_EXT; i_zon++)
+         {
+            string VarVal = "EXT_ZON_TMP_MEA_" + to_string(i_zon);
+            s_fur_mea[EXT].zon_tmp[i_zon] = (float)recordset->Fields->GetItem(VarVal.c_str())->GetValue().dblVal;
+         }
+
+         s_fur_mea[APC].ctl = (recordset->Fields->GetItem(L"APC_CTL")->GetValue().boolVal != 0);
+         s_fur_mea[APC].stp_tmp = (float)recordset->Fields->GetItem(L"APC_TMP_STRIP_MEA")->GetValue().dblVal;
+         for (int i_zon = 0; i_zon < NB_ZON_APC; i_zon++)
+         {
+            string VarVal = "APC_ZON_TMP_MEA_" + to_string(i_zon);
+            s_fur_mea[APC].zon_tmp[i_zon] = (float)recordset->Fields->GetItem(VarVal.c_str())->GetValue().dblVal;
+         }
       } // try
 
       // Error control

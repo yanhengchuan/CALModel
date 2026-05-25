@@ -293,6 +293,22 @@ bool MessageSPStoLtop()
          sps_entry[FCS].s_mea.cool_pow_pct[i_zon] = s_fur_mea[FCS].cool_pow_pct[i_zon];
       } // For all zones
    } // If a FCS
+
+   // If a EXT
+   if (NB_FUR_EXT > 0)
+   {
+      sps_entry[EXT].s_mea.tmp_stp = s_fur_mea[EXT].stp_tmp + TK;
+      for (int i_zon=0; i_zon < NB_ZON_EXT; i_zon++)
+         sps_entry[EXT].s_mea.tmp_zon[i_zon] = s_fur_mea[EXT].zon_tmp[i_zon] + TK;
+   } // If a EXT
+
+   // If a APC
+   if (NB_FUR_APC > 0)
+   {
+      sps_entry[APC].s_mea.tmp_stp = s_fur_mea[APC].stp_tmp + TK;
+      for (int i_zon=0; i_zon < NB_ZON_APC; i_zon++)
+         sps_entry[APC].s_mea.tmp_zon[i_zon] = s_fur_mea[APC].zon_tmp[i_zon] + TK;
+   } // If a APC
 	
 	return status;
 } // void
@@ -560,7 +576,7 @@ bool MessageSPGtoLtop()
          {            		
 				if ( s_coil.s_coil_data[i_coil].tmp_tgt[i_fur] <= 300.f + TK )						
 				{							
-					ns_STD::cl_TRC::ERR_Write("TRK", sub_name, "Coil %s %s tmp_tgt is not valid: %.0f °C",								
+					ns_STD::cl_TRC::ERR_Write("TRK", sub_name, "Coil %s %s tmp_tgt is not valid: %.0f ï¿½C",								
 						s_coil.s_coil_data[i_coil].id.c_str(), fur_cfg[i_fur].fur_name.c_str(), s_coil.s_coil_data[i_coil].tmp_tgt[i_fur]-TK);
 							
 					s_coil.s_coil_data[i_coil].valid = false;						
@@ -572,7 +588,7 @@ bool MessageSPGtoLtop()
          {
 			   if (s_coil.s_coil_data[i_coil].tmp_tgt[i_fur] <=  50.f)
             {
-               ns_STD::cl_TRC::TRC_Write("WAR", "TRK", sub_name, "Coil %s %s tmp_tgt is not valid: %.0f °C",
+               ns_STD::cl_TRC::TRC_Write("WAR", "TRK", sub_name, "Coil %s %s tmp_tgt is not valid: %.0f ï¿½C",
                   s_coil.s_coil_data[i_coil].id.c_str(), fur_cfg[i_fur].fur_name.c_str(), s_coil.s_coil_data[i_coil].tmp_tgt[i_fur]-TK);
 
                if (i_fur == SLW)
@@ -628,7 +644,7 @@ bool MessageFromLtop()
    if ( sps_act_sp[RTH].tmp_stp < 500.f + TK ||
          sps_act_sp[RTH].tmp_stp > 990.f + TK )
    {
-      ns_STD::cl_TRC::ERR_Write(fur_cfg[RTH].fur_name.c_str(), sub_name, "Strip target tmp is not valid: %.0f °C", sps_act_sp[RTH].tmp_stp - TK);
+      ns_STD::cl_TRC::ERR_Write(fur_cfg[RTH].fur_name.c_str(), sub_name, "Strip target tmp is not valid: %.0f ï¿½C", sps_act_sp[RTH].tmp_stp - TK);
       valid = false; 
    }
    
@@ -640,7 +656,7 @@ bool MessageFromLtop()
       if ( sps_act_sp[RTH].tmp_zon[i_zon] < 400.f + TK ||
             sps_act_sp[RTH].tmp_zon[i_zon] > TUB_MAX_TMP + 10.f )
       {
-         ns_STD::cl_TRC::ERR_Write(fur_cfg[RTH].fur_name.c_str(), sub_name, "Tmp tube Z%d is not valid: %.0f °C", i_zon, sps_act_sp[RTH].tmp_zon[i_zon] - TK);
+         ns_STD::cl_TRC::ERR_Write(fur_cfg[RTH].fur_name.c_str(), sub_name, "Tmp tube Z%d is not valid: %.0f ï¿½C", i_zon, sps_act_sp[RTH].tmp_zon[i_zon] - TK);
          valid = false; 
       }
 
@@ -655,7 +671,7 @@ bool MessageFromLtop()
 	avg_tub_tmp /= float(NB_ZON_RTH);
 	if ( avg_tub_tmp < 600.f + TK )
    {
-      ns_STD::cl_TRC::ERR_Write(fur_cfg[RTH].fur_name.c_str(), sub_name, "Average Pwr tube is not valid: %.0f °C", avg_tub_tmp - TK);
+      ns_STD::cl_TRC::ERR_Write(fur_cfg[RTH].fur_name.c_str(), sub_name, "Average Pwr tube is not valid: %.0f ï¿½C", avg_tub_tmp - TK);
       valid = false; 
    }
 

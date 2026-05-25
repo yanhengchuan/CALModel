@@ -104,6 +104,22 @@ bool SQL2_I_MSG_SPT_HEA()
       m_sql2->FloatProcArray(&PrmArr, "FCS_ZON_PWR_SPT_"+ZON, s_fur_spt[FCS].cool_zon_pow[i_zon]);
    } // For all FCS zones
 
+   m_sql2->BoolProcArray(&PrmArr, "EXT_VALID", s_fur_spt[EXT].valid);
+   m_sql2->FloatProcArray(&PrmArr, "EXT_TMP_STRIP", s_fur_spt[EXT].stp_tmp);
+   for (int i_zon = 0; i_zon < NB_ZON_EXT; i_zon++)
+   {
+      string ZON = to_string(i_zon);
+      m_sql2->FloatProcArray(&PrmArr, "EXT_ZON_TEMP_SPT_"+ZON, s_fur_spt[EXT].zon_tmp[i_zon]);
+   }
+
+   m_sql2->BoolProcArray(&PrmArr, "APC_VALID", s_fur_spt[APC].valid);
+   m_sql2->FloatProcArray(&PrmArr, "APC_TMP_STRIP", s_fur_spt[APC].stp_tmp);
+   for (int i_zon = 0; i_zon < NB_ZON_APC; i_zon++)
+   {
+      string ZON = to_string(i_zon);
+      m_sql2->FloatProcArray(&PrmArr, "APC_ZON_TEMP_SPT_"+ZON, s_fur_spt[APC].zon_tmp[i_zon]);
+   }
+
    m_sql2->executeNonResultProcedure(Procedure, PrmArr.vtArr, PrmArr.prmArr, PrmArr.sizArr);
 
    return true;
@@ -286,6 +302,18 @@ bool SQL2_I_MSG_COIL()
       m_sql2->FloatProcArray(&PrmArr, "TMP_TGT_FCS", s_sim.s_coil_data[i_coil].tmp_tgt[FCS]-TK);
       m_sql2->FloatProcArray(&PrmArr, "TMP_UPP_FCS", s_sim.s_coil_data[i_coil].tmp_upp[FCS]-TK);
       m_sql2->FloatProcArray(&PrmArr, "TMP_LOW_FCS", s_sim.s_coil_data[i_coil].tmp_low[FCS]-TK);
+      m_sql2->FloatProcArray(&PrmArr, "TMP_TGT_EXT", s_sim.s_coil_data[i_coil].tmp_tgt[EXT]-TK);
+      m_sql2->FloatProcArray(&PrmArr, "TMP_UPP_EXT", s_sim.s_coil_data[i_coil].tmp_upp[EXT]-TK);
+      m_sql2->FloatProcArray(&PrmArr, "TMP_LOW_EXT", s_sim.s_coil_data[i_coil].tmp_low[EXT]-TK);
+      m_sql2->FloatProcArray(&PrmArr, "TMP_TGT_APC", s_sim.s_coil_data[i_coil].tmp_tgt[APC]-TK);
+      m_sql2->FloatProcArray(&PrmArr, "TMP_UPP_APC", s_sim.s_coil_data[i_coil].tmp_upp[APC]-TK);
+      m_sql2->FloatProcArray(&PrmArr, "TMP_LOW_APC", s_sim.s_coil_data[i_coil].tmp_low[APC]-TK);
+      m_sql2->FloatProcArray(&PrmArr, "TMP_TGT_EXT", s_sim.s_coil_data[i_coil].tmp_tgt[EXT]-TK);
+      m_sql2->FloatProcArray(&PrmArr, "TMP_UPP_EXT", s_sim.s_coil_data[i_coil].tmp_upp[EXT]-TK);
+      m_sql2->FloatProcArray(&PrmArr, "TMP_LOW_EXT", s_sim.s_coil_data[i_coil].tmp_low[EXT]-TK);
+      m_sql2->FloatProcArray(&PrmArr, "TMP_TGT_APC", s_sim.s_coil_data[i_coil].tmp_tgt[APC]-TK);
+      m_sql2->FloatProcArray(&PrmArr, "TMP_UPP_APC", s_sim.s_coil_data[i_coil].tmp_upp[APC]-TK);
+      m_sql2->FloatProcArray(&PrmArr, "TMP_LOW_APC", s_sim.s_coil_data[i_coil].tmp_low[APC]-TK);
 
       m_sql2->executeNonResultProcedure(Procedure, PrmArr.vtArr, PrmArr.prmArr, PrmArr.sizArr);
       PrmArr.sizArr.clear();   PrmArr.prmArr.clear();   PrmArr.vtArr.clear();
