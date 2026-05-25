@@ -123,9 +123,9 @@ bool SPS_Specific::INIT()
    // ===
    fur_cfg[EXT].nb_zon = NB_ZON_EXT;
    fur_cfg[EXT].pre_fur = FCS;
-   fur_cfg[EXT].stp_lgt = 0.f;
+   fur_cfg[EXT].stp_lgt = STP_LGT_EXT;
    fur_cfg[EXT].xPyro = fur_cfg[FCS].xPyro + fur_cfg[FCS].foll_lgt + fur_cfg[EXT].stp_lgt;
-   fur_cfg[EXT].foll_lgt = 0.f;
+   fur_cfg[EXT].foll_lgt = FOLL_LGT_EXT;
 
    s_adp[EXT].use_ada = false;
    sps_entry[EXT].s_mea.lgt = 0.f;
@@ -134,9 +134,9 @@ bool SPS_Specific::INIT()
    // ===
    fur_cfg[APC].nb_zon = NB_ZON_APC;
    fur_cfg[APC].pre_fur = EXT;
-   fur_cfg[APC].stp_lgt = 0.f;
+   fur_cfg[APC].stp_lgt = STP_LGT_APC;
    fur_cfg[APC].xPyro = fur_cfg[EXT].xPyro + fur_cfg[EXT].foll_lgt + fur_cfg[APC].stp_lgt;
-   fur_cfg[APC].foll_lgt = 0.f;
+   fur_cfg[APC].foll_lgt = FOLL_LGT_APC;
 
    s_adp[APC].use_ada = false;
    sps_entry[APC].s_mea.lgt = 0.f;

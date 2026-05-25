@@ -158,10 +158,14 @@ enum SEC
 // EXT
 // ===
 #define NB_ZON_EXT	3
+#define STP_LGT_EXT   (3.f * 24.6f)   // [m] EXT section entry -> strip pyrometer
+#define FOLL_LGT_EXT  3.f             // [m] EXT -> APC inter-section gap
 
 // APC
 // ===
 #define NB_ZON_APC	4
+#define STP_LGT_APC   (4.f * 24.6f)   // [m] APC section entry -> strip pyrometer
+#define FOLL_LGT_APC  0.f             // [m] APC -> line exit inter-section gap
 
 // Model
 // =====
