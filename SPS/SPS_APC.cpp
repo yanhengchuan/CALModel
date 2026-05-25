@@ -48,7 +48,7 @@ bool SPS_APC(struct sps_coil_data sps_fin_sp_apc)
       fba_stp[APC].reset = true;
       float avg_pow = 0.f;
       // For all zones
-      for ( int i_zon=0; i_zon < NB_ZON_APC; i_zon++ )
+      for ( int i_zon=0; i_ i_zon++ )
       {
          avg_pow += sps_entry[APC].s_mea.cool_pow_pct[i_zon];
       } // For all zones

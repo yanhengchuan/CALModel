@@ -65,6 +65,65 @@ namespace ns_STD
         fr[2][2] = (a[0][0] * a[1][1] - a[0][1] * a[1][0]) / *deter;
     }
 
+    void cl_RTF::RTF_Radiation_factor(float e[], float s[], float fr[][3], float *deter, float ff22)
+    {
+        const float eps = 1e-6f;
+
+        // 发射率与表面积的数值保护
+        float e0 = e[0]; if (e0 < eps) e0 = eps; if (e0 > 0.999999f) e0 = 0.999999f;
+        float e1 = e[1]; if (e1 < eps) e1 = eps; if (e1 > 0.999999f) e1 = 0.999999f;
+        float e2 = e[2]; if (e2 < eps) e2 = eps; if (e2 > 0.999999f) e2 = 0.999999f;
+
+        float s0 = s[0]; if (s0 < eps) s0 = eps;
+        float s1 = s[1]; if (s1 < eps) s1 = eps;
+        float s2 = s[2]; if (s2 < eps) s2 = eps;
+
+        float a[3][3] = { 0.0f };
+
+        // 灰体网络系数（对角项为 1/e - 1，非对角项由形状因子与面积比确定）
+        a[0][0] = 1.0f / e0 - 1.0f;
+        a[1][1] = 1.0f / e1 - 1.0f;
+        a[2][2] = 1.0f / e2 - 1.0f;
+
+        a[0][1] = -ff22 * (s1 / s0);
+        a[1][0] = -ff22;
+        a[1][2] = -ff22;
+        a[2][1] = -ff22 * (s1 / s2);
+        // a[0][2] 与 a[2][0] 缺省保持为 0
+
+        // 行列式
+        float det =
+            a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1]) -
+            a[0][1] * (a[1][0] * a[2][2] - a[1][2] * a[2][0]) +
+            a[0][2] * (a[1][0] * a[2][1] - a[1][1] * a[2][0]);
+
+        *deter = det;
+
+        if (fabsf(det) < eps)
+        {
+            // 退化情形：返回零矩阵，避免后续除零
+            fr[0][0] = fr[0][1] = fr[0][2] = 0.0f;
+            fr[1][0] = fr[1][1] = fr[1][2] = 0.0f;
+            fr[2][0] = fr[2][1] = fr[2][2] = 0.0f;
+            return;
+        }
+
+        const float invDet = 1.0f / det;
+
+        // 伴随矩阵 / det -> 逆矩阵，即辐射因子矩阵
+        fr[0][0] = (a[1][1] * a[2][2] - a[1][2] * a[2][1]) * invDet;
+        fr[0][1] = (a[0][2] * a[2][1] - a[0][1] * a[2][2]) * invDet;
+        fr[0][2] = (a[0][1] * a[1][2] - a[0][2] * a[1][1]) * invDet;
+
+        fr[1][0] = (a[1][2] * a[2][0] - a[1][0] * a[2][2]) * invDet;
+        fr[1][1] = (a[0][0] * a[2][2] - a[0][2] * a[2][0]) * invDet;
+        fr[1][2] = (a[0][2] * a[1][0] - a[0][0] * a[1][2]) * invDet;
+
+        fr[2][0] = (a[1][0] * a[2][1] - a[1][1] * a[2][0]) * invDet;
+        fr[2][1] = (a[0][1] * a[2][0] - a[0][0] * a[2][1]) * invDet;
+        fr[2][2] = (a[0][0] * a[1][1] - a[0][1] * a[1][0]) * invDet;
+    }
+
     /*============================================================================
     / RTF_Radiation_calcul: Calculate heat exchange by radiation. 计算辐射热交换，返回三个热流密度值
     /
@@ -109,9 +168,10 @@ namespace ns_STD
         t[0] = s_elt[elt_u].s_strip.tmp_mid_strip;
         t[1] = s_ecz.s_tub.tmp_tub;
         t[2] = s_elt[elt_d].s_strip.tmp_mid_strip;
-        
-        // 计算辐射因子
+
+        // 辐射因子
         float ff22 = 0.5f; // 形状因子，可能需要根据实际情况调整
+        // ff22 = rtf_cfg[n_rtf].ff22 需要从配置文件获取
         RTF_Radiation_factor(e, s, fr, &deter, ff22);
         
         // 计算热流密度
@@ -120,6 +180,36 @@ namespace ns_STD
         *dq3 = SIGMA * (fr[2][0] * pow(t[0], 4.0f) + fr[2][1] * pow(t[1], 4.0f) + fr[2][2] * pow(t[2], 4.0f));
         
         return status;
+    }
+
+    bool cl_RTF::RTF_Radiation_calcul(struct struct_ecz s_ecz, struct struct_elt s_elt[], int nb_elt, float *dq1, float *dq2, float *dq3)
+    {
+        if (!dq1 || !dq2 || !dq3) return false;
+
+        const int elt_u = s_ecz.elt_u;
+        const int elt_d = s_ecz.elt_d;
+
+        if (elt_u < 0 || elt_u >= nb_elt || elt_d < 0 || elt_d >= nb_elt) return false;
+
+        // 读温度（单位为 K），并确保非负
+        float t0 = s_elt[elt_u].s_strip.tmp_mid_strip; if (t0 < 0.0f) t0 = 0.0f;
+        float t1 = s_ecz.s_tub.tmp_tub;                if (t1 < 0.0f) t1 = 0.0f;
+        float t2 = s_elt[elt_d].s_strip.tmp_mid_strip; if (t2 < 0.0f) t2 = 0.0f;
+
+        // 使用已存储的辐射因子矩阵进行计算（初始化阶段已由 RTF_Radiation_factor 写入 s_ecz.fr）
+        const float fr00 = s_ecz.fr[0][0], fr01 = s_ecz.fr[0][1], fr02 = s_ecz.fr[0][2];
+        const float fr10 = s_ecz.fr[1][0], fr11 = s_ecz.fr[1][1], fr12 = s_ecz.fr[1][2];
+        const float fr20 = s_ecz.fr[2][0], fr21 = s_ecz.fr[2][1], fr22 = s_ecz.fr[2][2];
+
+        const float t0_4 = powf(t0, 4.0f);
+        const float t1_4 = powf(t1, 4.0f);
+        const float t2_4 = powf(t2, 4.0f);
+
+        *dq1 = SIGMA * (fr00 * t0_4 + fr01 * t1_4 + fr02 * t2_4);
+        *dq2 = SIGMA * (fr10 * t0_4 + fr11 * t1_4 + fr12 * t2_4);
+        *dq3 = SIGMA * (fr20 * t0_4 + fr21 * t1_4 + fr22 * t2_4);
+
+        return true;
     }
 
     // BISRA相关函数实现
@@ -2043,24 +2133,17 @@ namespace ns_STD
 - 3.从使用示例中可以看到 PID 控制器的基本逻辑
 
 ## 功能说明
-1. 1.
-   参数验证 ：检查输入的 PID 结构体指针是否有效
-2. 2.
-   重置处理 ：当 reset 标志为真时，清除积分项和输出
-3. 3.
-   自动模式检查 ：只有在自动模式下才进行 PID 计算
-4. 4.
-   PID 算法 ：
+1. 参数验证 ：检查输入的 PID 结构体指针是否有效
+2. 重置处理 ：当 reset 标志为真时，清除积分项和输出
+3. 自动模式检查 ：只有在自动模式下才进行 PID 计算
+4. PID 算法 ：
    
    - 比例项 (P) ： Kp × error
    - 积分项 (I) ：累积误差 × Ki
    - 输出 ：比例项 + 积分项
-5. 5.
-   积分防饱和 ：对积分项进行限幅，防止积分饱和
-6. 6.
-   输出限幅 ：确保最终输出在设定的最大值和最小值范围内
-7. 7.
-   异常处理 ：包含完整的异常捕获和错误记录
+5. 积分防饱和 ：对积分项进行限幅，防止积分饱和
+6. 输出限幅 ：确保最终输出在设定的最大值和最小值范围内
+7. 异常处理 ：包含完整的异常捕获和错误记录
 ## 使用方式
 函数接受一个 fba_pid 结构体指针，该结构体包含：
 
